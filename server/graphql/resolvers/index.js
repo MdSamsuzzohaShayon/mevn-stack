@@ -23,10 +23,45 @@ const addClub = {
 }
 
 
+const updateClub = {
+    type: ClubType,
+    args: {
+        id: { type: GraphQLID },
+        name: {type: GraphQLString}, 
+        league: {type: GraphQLString}
+    },
+    resolve(parent, args) {
+        // MONGO DB FIND BY ID AND UPDATE 
+        return {
+            id: args.id
+        };
+    }
+}
+
+
+
+const deleteClub = {
+    type: ClubType,
+    args: {
+        id: { type: GraphQLID }
+    },
+    resolve(parent, args) {
+        // MONGO DB FIND BY ID AND UPDATE 
+        return {
+            id: args.id
+        };
+    }
+}
+
+
+
+
 const RootMutation = new GraphQLObjectType({
     name: "RootMutation",
     fields: {
-        addClub
+        addClub,
+        updateClub,
+        deleteClub
     }
 
 });
