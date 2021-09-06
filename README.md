@@ -1,3 +1,6 @@
+ - [Referance](https://www.section.io/engineering-education/build-a-graphql-server-using-nodejs/)
+ 
+
 ### Query 
  1. Get club
     ```
@@ -5,6 +8,15 @@
         club(id: 12){
             id
             name
+        }
+    }
+    ```
+
+ 2. Get single club
+    ```
+    query{
+        singleClub(id: "12"){
+            id
         }
     }
     ```

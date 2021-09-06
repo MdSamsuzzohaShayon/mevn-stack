@@ -1,5 +1,6 @@
-const { GraphQLObjectType, GraphQLID, GraphQLString } = require("graphql");
+const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList } = require("graphql");
 const { ClubType, PlayerType } = require('../types');
+const Club = require('../../models/Club');
 
 
 
@@ -14,16 +15,34 @@ const { ClubType, PlayerType } = require('../types');
 
 
 // THIS IS LIKE GET REQUEST 
-const club = {
+const clubs = {
+    name: "club",
+    type: GraphQLList(ClubType),
+    async resolve(parent, args) {
+        const clubs = await Club.find();
+        // console.log(clubs);
+        return clubs;
+    }
+}
+
+
+
+
+const singleClub = {
+    name: "SingleClub",
     type: ClubType,
-    resolve(parent, args) {
-        return { name: "Some name", league: "Some league" }
+    args: { id: {type: GraphQLID} },
+    async resolve(parent, args) {
+        const findClub = await Club.findOne({id: args.id});
+        // console.log(findClub);
+        return findClub;
     }
 }
 
 
 
 const players = {
+    name: "players",
     type: PlayerType,
     args: { name: { type: GraphQLString } },
     resolve(parent, args) {
@@ -38,7 +57,8 @@ const players = {
 const RootQuery = new GraphQLObjectType({
     name: "RootQuery",
     fields: {
-        club,
+        singleClub,
+        clubs,
         players
     }
 });
