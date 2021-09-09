@@ -1,25 +1,19 @@
 <template>
-  <div class="wrapper">
-    <Club />
-  </div>
+  <Club />
 </template>
 
 <script>
-import Club from "./components/Club.vue";
+import Club from './components/Club.vue'
 
 export default {
-  components: {Club},
-  setup() {
-    return {};
-  },
-};
+  name: 'App',
+  components: {
+    Club
+  }
+}
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 </style>
-

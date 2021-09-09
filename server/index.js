@@ -4,6 +4,7 @@ const graphql = require('graphql');
 const GraphQLSchema = graphql.GraphQLSchema;
 const { graphqlHTTP } = require('express-graphql');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const RootQuery = require('./graphql/schema/index');
 const RootMutation = require('./graphql/resolvers/index');
@@ -20,6 +21,10 @@ const app = express();
 
 
 mongoose.connect(process.env.MONGO_URI, { useUnifiedTopology: true, useNewUrlParser: true }, () => console.log('Mongodb is connected'));
+
+
+
+app.use(cors());
 
 
 

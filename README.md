@@ -46,3 +46,9 @@
         }
     }
     ```
+
+### Vue3 Apollo
+ - __https://www.learmoreseekmore.com/2021/08/vue3-consume-graphql-endpoint-using-vue-apollo.html__
+ - __https://v4.apollo.vuejs.org/guide-composable/query.html#result-picking__
+ - __https://v4.apollo.vuejs.org/migration/#apollo-setup__
+

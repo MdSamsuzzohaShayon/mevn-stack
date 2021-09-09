@@ -68,7 +68,11 @@
 
 
 <script>
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
+import { useQuery, useResult } from "@vue/apollo-composable";
+import gql from "graphql-tag";
+import { GET_CLUBS } from "../graphql/queries";
+
 export default {
   setup(props) {
     const state = reactive({
@@ -83,6 +87,44 @@ export default {
       ],
       update: false,
     });
+
+    function getClubs() {
+      const { result, loading } = useQuery(gql`
+        query getClubs {
+          clubs {
+            id
+            name
+            league
+          }
+        }
+      `);
+      const clubs = useResult(result, null, (data) => data);
+      console.log(clubs.value);
+      return clubs.value;
+    }
+
+    onMounted(async () => {
+      console.log("Component is mounted");
+      // const { result, loading } =  useQuery(gql`
+      //   query getClubs {
+      //     clubs {
+      //       id
+      //       name
+      //       league
+      //     }
+      //   }
+      // `);
+      // // getClubs();
+      // const clubs =  useResult(result, null, (data) => data);
+      // console.log(clubs.value);
+
+      const clubs = await $apollo.query({ query: GET_ALL_USERS_QUERY });
+      console.log(clubs);
+
+      // console.log(res);
+      state.clubList = clubs.value.clubs;
+    });
+
     function submitHandler(e) {
       e.preventDefault();
       // state.club = props.club;
