@@ -31,7 +31,7 @@
     </div>
     <br />
     <div class="all-clubs mt-4 container mx-auto">
-      <ul class="list space-y-2">
+      <ul class="list space-y-2 flex inline-flex flex-wrap justify-between">
         <li
           class="
             text-gray-300
@@ -42,12 +42,23 @@
             shadow
             hover:bg-gray-700
             transition-all transition-colors
-            flex flex-row
           "
           v-for="(item, i) in state.clubList"
           v-bind:key="i"
         >
-          <p class="w-1/3">{{ item.name }}</p>
+          <div
+            class="
+              inside-list
+              flex
+              justify-between
+              flex-row
+              border-b border-solid border-indigo-900
+              mb-2
+            "
+          >
+            <p class="w-1/2">{{ item.name }}</p>
+            <p class="w-1/2">{{ item.league }}</p>
+          </div>
           <button
             v-on:click="(e) => deleteHandler(e, item.id)"
             class="bg-red-600 py-1 px-2 rounded"
@@ -69,9 +80,13 @@
 
 <script>
 import { onMounted, reactive } from "vue";
+/*
+// TRIED WITH GRAPHQL APOLLO CLIENT BUT IT WAS NOT WORKING
 import { useQuery, useResult } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { GET_CLUBS } from "../graphql/queries";
+*/
+import { getClubs } from "../graphql/queries";
+import { addClub, updateClub, deleteClub } from "../graphql/mutations";
 
 export default {
   setup(props) {
@@ -86,10 +101,14 @@ export default {
         { id: 3, name: "FC Lisverpool", league: "EPL" },
       ],
       update: false,
+      isLoading: false,
     });
 
-    function getClubs() {
-      const { result, loading } = useQuery(gql`
+    onMounted(async () => {
+      console.log("Component is mounted");
+      /*
+      // GRAPHQL APOLLO (NOT WORKING)
+      const { result, loading } =  useQuery(gql`
         query getClubs {
           clubs {
             id
@@ -98,54 +117,62 @@ export default {
           }
         }
       `);
-      const clubs = useResult(result, null, (data) => data);
+      // getClubs();
+      const clubs =  useResult(result, null, (data) => data);
       console.log(clubs.value);
-      return clubs.value;
-    }
-
-    onMounted(async () => {
-      console.log("Component is mounted");
-      // const { result, loading } =  useQuery(gql`
-      //   query getClubs {
-      //     clubs {
-      //       id
-      //       name
-      //       league
-      //     }
-      //   }
-      // `);
-      // // getClubs();
-      // const clubs =  useResult(result, null, (data) => data);
-      // console.log(clubs.value);
 
       const clubs = await $apollo.query({ query: GET_ALL_USERS_QUERY });
       console.log(clubs);
 
-      // console.log(res);
+      console.log(res);
       state.clubList = clubs.value.clubs;
+      */
+
+      const clubs = await getClubs(state);
+      state.clubList = clubs;
     });
 
-    function submitHandler(e) {
+    async function submitHandler(e) {
       e.preventDefault();
       // state.club = props.club;
       // state.league = props.league;
       console.log("E - submit ", e);
-      console.log(state.club);
+      console.log("Update -", state.update);
+      if (state.update) {
+        const res = await updateClub(state, state.club.id);
+      } else {
+        const res = await addClub(state);
+      }
+
+      // console.log(state.club);
+      const clubs = await getClubs(state);
+      state.clubList = clubs;
+
+      // console.log(res);
+      state.club = { name: null, league: null };
       state.update = false;
     }
-    function deleteHandler(e, id) {
+
+    async function deleteHandler(e, id) {
       e.preventDefault();
       console.log("E - Delete ", e);
       console.log("ID - ", id);
+
+      const res = await deleteClub(state, id);
+
+      // console.log(state.club);
+      const clubs = await getClubs(state);
+      state.clubList = clubs;
     }
 
     function updateHandler(e, id) {
       e.preventDefault();
-      console.log("E - Update ", e);
-      console.log("ID - ", id);
+      // console.log("E - Update ", e);
+      // console.log("ID - ", id);
       const selectedClub = state.clubList.filter((cl, i) => cl.id === id)[0];
       state.club.name = selectedClub.name;
       state.club.league = selectedClub.league;
+      state.club.id = id;
       state.update = true;
     }
     return {
@@ -168,5 +195,8 @@ export default {
   /* left: 0; */
   width: 100%;
   z-index: 1;
+}
+.list-item {
+  width: 30%;
 }
 </style>
